@@ -24,4 +24,8 @@ public class CommunistAllocationAlgorithm implements PagesManagement{
         return allocationArray;
 
     }
+
+    public void printName(){
+        System.out.println("CommunistAllocationAlgorithm");
+    }
 }

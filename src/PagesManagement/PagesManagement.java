@@ -9,5 +9,6 @@ public interface PagesManagement {
     default int [] allocationAlgorithm(ArrayList<MyProcess> processes, int numberOfAvailableFrames){
         return null;
     }
+    void printName();
 
 }

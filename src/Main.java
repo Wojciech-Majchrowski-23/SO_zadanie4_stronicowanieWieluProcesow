@@ -1,5 +1,7 @@
 import PagesHandler.*;
 import PagesManagement.CommunistAllocationAlgorithm;
+import PagesManagement.PagesManagement;
+import PagesManagement.ProportionalAllocationAlgorithm;
 
 import java.util.ArrayList;
 
@@ -21,20 +23,28 @@ public class Main {
 
         int numberOfAvailableFrames = (4 * processGenerator.NUMBER_OF_PROCESSES) + 1;
 
-        PagesHandler pagesHandler1 = new PagesHandlerFIFO(numberOfAvailableFrames);
-        pagesHandler1.processPaging(GLOBAL_REFERENCES_CHAIN, processes, new CommunistAllocationAlgorithm());
+        PagesManagement [] pagesManagements = new PagesManagement[2];
+        pagesManagements[0] = new CommunistAllocationAlgorithm();
+        pagesManagements[1] = new ProportionalAllocationAlgorithm();
 
-        PagesHandler pagesHandler2 = new PagesHandlerRANDOM(numberOfAvailableFrames);
-        pagesHandler2.processPaging(GLOBAL_REFERENCES_CHAIN, processes, new CommunistAllocationAlgorithm());
+        for(PagesManagement pm : pagesManagements) {
+            pm.printName();
+            PagesHandler pagesHandler1 = new PagesHandlerFIFO(numberOfAvailableFrames);
+            pagesHandler1.processPaging(GLOBAL_REFERENCES_CHAIN, processes, pm);
 
-        PagesHandler pagesHandler3 = new PagesHandlerOPT(numberOfAvailableFrames);
-        pagesHandler3.processPaging(GLOBAL_REFERENCES_CHAIN, processes, new CommunistAllocationAlgorithm());
+            PagesHandler pagesHandler2 = new PagesHandlerRANDOM(numberOfAvailableFrames);
+            pagesHandler2.processPaging(GLOBAL_REFERENCES_CHAIN, processes, pm);
 
-        PagesHandler pagesHandler4 = new PagesHandlerLRU(numberOfAvailableFrames);
-        pagesHandler4.processPaging(GLOBAL_REFERENCES_CHAIN, processes, new CommunistAllocationAlgorithm());
+            PagesHandler pagesHandler3 = new PagesHandlerOPT(numberOfAvailableFrames);
+            pagesHandler3.processPaging(GLOBAL_REFERENCES_CHAIN, processes, pm);
 
-        PagesHandler pagesHandler5 = new PagesHandlerALRU(numberOfAvailableFrames);
-        pagesHandler5.processPaging(GLOBAL_REFERENCES_CHAIN, processes, new CommunistAllocationAlgorithm());
+            PagesHandler pagesHandler4 = new PagesHandlerLRU(numberOfAvailableFrames);
+            pagesHandler4.processPaging(GLOBAL_REFERENCES_CHAIN, processes, pm);
+
+            PagesHandler pagesHandler5 = new PagesHandlerALRU(numberOfAvailableFrames);
+            pagesHandler5.processPaging(GLOBAL_REFERENCES_CHAIN, processes, pm);
+            System.out.println();
+        }
     }
 
     public static int lastReferenceArrivalTime(ArrayList<MyProcess> processes){
