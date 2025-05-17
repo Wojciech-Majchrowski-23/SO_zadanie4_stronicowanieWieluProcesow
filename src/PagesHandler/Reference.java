@@ -2,9 +2,9 @@ package PagesHandler;
 
 public class Reference {
 
-    int pageNumber;
-    int processMembership;
-    int arrivalTime;
+    public int pageNumber;
+    public int processMembership;
+    public int arrivalTime;
 
     public Reference(int pageNumber, int processMembership, int arrivalTime) {
         this.pageNumber = pageNumber;
@@ -13,7 +13,7 @@ public class Reference {
     }
 
     public String toString() {
-        return String.valueOf(pageNumber);
+        return "{ [ processID: " + String.valueOf(processMembership) + " ], [ pageNumber: " + String.valueOf(pageNumber) + " ], [ arrTime: " + String.valueOf(arrivalTime) + " ] }\n";
     }
 
 }

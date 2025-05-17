@@ -1,5 +1,7 @@
 package PagesHandler;
 
+import PagesManagement.PagesManagement;
+
 import java.util.ArrayList;
 
 public class PagesHandlerOPT implements PagesHandler {
@@ -11,9 +13,14 @@ public class PagesHandlerOPT implements PagesHandler {
     }
 
     @Override
-    public void processPaging(ArrayList<Reference> referencesChain) {
+    public void processPaging(ArrayList<Reference> referencesChain, ArrayList<MyProcess> processes, PagesManagement pagesManagement) {
 
-        ArrayList<Reference> frames = new ArrayList<>();
+        int [] allocationArray = pagesManagement.allocationAlgorithm(processes, framesSize);
+
+        ArrayList<ArrayList<Reference>> frames = new ArrayList<>();
+        for (int i = 0; i < processes.size(); i++) {
+            frames.add(new ArrayList<>());
+        }
 
         int pageErrorsCounter = 0;
 
@@ -25,7 +32,7 @@ public class PagesHandlerOPT implements PagesHandler {
 
         for (int i = 0; i < referencesChain.size(); i++) {
             //System.out.println(referencesChain.get(i));
-            if (!contains(referencesChain.get(i), frames)) {
+            if (!contains(referencesChain.get(i), frames.get(referencesChain.get(i).processMembership))) {
 
                 pageErrorsCounter++;
 
@@ -44,11 +51,11 @@ public class PagesHandlerOPT implements PagesHandler {
                     }
                 }
 
-                if (frames.size() == framesSize) {
-                    int bestIndex = findBestIndex(i, referencesChain, frames);
-                    frames.set(bestIndex, referencesChain.get(i));
+                if (frames.get(referencesChain.get(i).processMembership).size() == allocationArray[referencesChain.get(i).processMembership]) {
+                    int bestIndex = findBestIndex(i, referencesChain, frames.get(referencesChain.get(i).processMembership));
+                    frames.get(referencesChain.get(i).processMembership).set(bestIndex, referencesChain.get(i));
                 } else {
-                    frames.add(referencesChain.get(i));
+                    frames.get(referencesChain.get(i).processMembership).add(referencesChain.get(i));
                 }
             }
             else{
@@ -56,7 +63,9 @@ public class PagesHandlerOPT implements PagesHandler {
                     localSzamotanieCounter--;
                 }
             }
-            //printArrayList(frames);
+//            for(int j = 0; j < frames.size(); j++){
+//                printArrayList(frames.get(j));
+//            }
         }
         System.out.printf("%-15s %25s %25s %n", "[ OPT ]", "[ Number of page errors: " + pageErrorsCounter + " ]", "[ Number of szamotanie: " + szamotanieCounter + " ]");
     }

@@ -1,5 +1,7 @@
 package PagesHandler;
 
+import PagesManagement.PagesManagement;
+
 import java.util.ArrayList;
 
 public class PagesHandlerALRU implements PagesHandler {
@@ -11,9 +13,14 @@ public class PagesHandlerALRU implements PagesHandler {
     }
 
     @Override
-    public void processPaging(ArrayList<Reference> referencesChain) {
+    public void processPaging(ArrayList<Reference> referencesChain, ArrayList<MyProcess> processes, PagesManagement pagesManagement) {
 
-        ArrayList<Pair> frames = new ArrayList<>();
+        int [] allocationArray = pagesManagement.allocationAlgorithm(processes, framesSize);
+
+        ArrayList<ArrayList<Pair>> frames = new ArrayList<>();
+        for (int i = 0; i < processes.size(); i++) {
+            frames.add(new ArrayList<>());
+        }
 
         int pageErrorsCounter = 0;
 
@@ -26,7 +33,7 @@ public class PagesHandlerALRU implements PagesHandler {
         for (int i = 0; i < referencesChain.size(); i++) {
             Reference reference = referencesChain.get(i);
             //System.out.println(reference);
-            if (!contains(reference, frames)) {
+            if (!contains(reference, frames.get(referencesChain.get(i).processMembership))) {
 
                 pageErrorsCounter++;
 
@@ -45,16 +52,16 @@ public class PagesHandlerALRU implements PagesHandler {
                     }
                 }
 
-                if (frames.size() == framesSize) {
-                    int index = findGoodIndex(reference, frames);
-                    frames.remove(index);
-                    frames.add(new Pair(reference, true));
+                if (frames.get(referencesChain.get(i).processMembership).size() == allocationArray[referencesChain.get(i).processMembership]) {
+                    int index = findGoodIndex(reference, frames.get(referencesChain.get(i).processMembership));
+                    frames.get(referencesChain.get(i).processMembership).remove(index);
+                    frames.get(referencesChain.get(i).processMembership).add(new Pair(reference, true));
                 } else {
-                    frames.add(new Pair(reference, true));
+                    frames.get(referencesChain.get(i).processMembership).add(new Pair(reference, true));
                 }
             }
             else {
-                Pair p = findThatPage(frames, reference);
+                Pair p = findThatPage(frames.get(referencesChain.get(i).processMembership), reference);
                 if (p != null) {
                     p.chanceBit = true;
                 }
@@ -63,7 +70,9 @@ public class PagesHandlerALRU implements PagesHandler {
                     localSzamotanieCounter--;
                 }
             }
-            //printArrayListOfPairs(frames);
+//            for(int j = 0; j < frames.size(); j++){
+//                printArrayListOfPairs(frames.get(j));
+//            }
         }
         System.out.printf("%-15s %25s %25s %n", "[ aLRU ]", "[ Number of page errors: " + pageErrorsCounter + " ]", "[ Number of szamotanie: " + szamotanieCounter + " ]");
     }

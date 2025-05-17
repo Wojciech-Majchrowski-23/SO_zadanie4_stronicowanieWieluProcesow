@@ -1,5 +1,7 @@
 package PagesHandler;
 
+import PagesManagement.*;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -13,9 +15,14 @@ public class PagesHandlerFIFO implements PagesHandler {
     }
 
     @Override
-    public void processPaging(ArrayList<Reference> referencesChain) {
+    public void processPaging(ArrayList<Reference> referencesChain, ArrayList<MyProcess> processes, PagesManagement pagesManagement) {
 
-        Queue<Reference> pagesQueue = new LinkedList<>();
+        int [] allocationArray = pagesManagement.allocationAlgorithm(processes, framesSize);
+
+        ArrayList<Queue<Reference>> pagesQueues = new ArrayList<>();
+        for (int i = 0; i < processes.size(); i++) {
+            pagesQueues.add(new LinkedList<>());
+        }
         int pageErrorsCounter = 0;
 
         int szamotanieCounter = 0;
@@ -26,7 +33,7 @@ public class PagesHandlerFIFO implements PagesHandler {
 
         for (Reference newPage : referencesChain) {
             //System.out.println(newPage);
-            if (!contains(newPage, pagesQueue)) {
+            if (!contains(newPage, pagesQueues.get(newPage.processMembership /* to jest id. Na podstawie id procesu sa wrzucane do roznych kolejek */))) {
 
                 pageErrorsCounter++;
 
@@ -45,17 +52,19 @@ public class PagesHandlerFIFO implements PagesHandler {
                     }
                 }
 
-                if (pagesQueue.size() == framesSize) {
-                    pagesQueue.poll();
+                if (pagesQueues.get(newPage.processMembership).size() == allocationArray[newPage.processMembership]) {
+                    pagesQueues.get(newPage.processMembership).poll();
                 }
-                pagesQueue.add(newPage);
+                pagesQueues.get(newPage.processMembership).add(newPage);
             }
             else{
                 if(localSzamotanieCounter > 0){
                     localSzamotanieCounter--;
                 }
             }
-            //printQueue(pagesQueue);
+//            for(int i = 0; i < pagesQueues.size(); i++){
+//                printQueue(pagesQueues.get(i));
+//            }
         }
         System.out.printf("%-15s %25s %25s %n", "[ FIFO ]", "[ Number of page errors: " + pageErrorsCounter + " ]", "[ Number of szamotanie: " + szamotanieCounter + " ]");
     }

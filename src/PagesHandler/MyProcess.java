@@ -1,15 +1,15 @@
-import PagesHandler.Reference;
+package PagesHandler;
 
 import java.util.ArrayList;
 
-public class Process {
+public class MyProcess {
 
-    int id;
-    int numberOfPages;
-    ArrayList<Integer> pages;
-    ArrayList<Reference> referencesChain;
+    public int id;
+    public int numberOfPages;
+    public ArrayList<Integer> pages;
+    public ArrayList<Reference> referencesChain;
 
-    public Process(int id, int numberOfPages) {
+    public MyProcess(int id, int numberOfPages) {
         this.id = id;
         this.numberOfPages = numberOfPages;
     }
@@ -34,12 +34,12 @@ public class Process {
         }
         sb.append("\n");
 
-        sb.append("References Chain: ");
-        if (referencesChain != null) {
-            sb.append(referencesChain.toString());
-        } else {
-            sb.append("null");
-        }
+//        sb.append("References Chain: ");
+//        if (referencesChain != null) {
+//            sb.append(referencesChain.toString());
+//        } else {
+//            sb.append("null");
+//        }
 
         return sb.toString();
     }
